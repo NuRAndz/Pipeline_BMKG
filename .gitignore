@@ -1,0 +1,25 @@
+# Virtual environment (bisa dibuat ulang dengan pip, jangan diunggah)
+.venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Data mentah (besar, terus bertambah, bisa diambil ulang dari BMKG)
+data/
+
+# Rahasia (JANGAN PERNAH diunggah)
+.env
+*.env
+service-account*.json
+*-key.json
+credentials*.json
+
+# Pengaturan pribadi editor
+.vscode/
+.idea/
+
+# File sistem
+.DS_Store
+Thumbs.db
