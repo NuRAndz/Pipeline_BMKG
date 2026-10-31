@@ -51,7 +51,7 @@ def bersihkan(item, feed):
 def main():
     for feed in ["autogempa", "gempaterkini", "gempadirasakan"]:
         # Ambil file terbaru (nama file berisi timestamp, jadi urut waktu)
-        file = sorted(Path("data/raw/bmkg", feed).glob("*.json"))[-1]
+        file = sorted(Path(__file__).parent.joinpath("data/raw/bmkg", feed).glob("*.json"))[-1]
         daftar = baca_gempa(file)
         print(feed, "->", len(daftar), "gempa")
         print(bersihkan(daftar[0], feed))
