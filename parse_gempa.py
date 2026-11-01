@@ -50,23 +50,32 @@ def bersihkan(item, feed):
 
 
 def main():
-    # Folder data relatif terhadap lokasi skrip, bukan folder tempat perintah dijalankan
-    folder_data = Path(__file__).parent / "data"
     semua_baris = []
 
-    for file in sorted((folder_data / "raw/bmkg").glob("*/*.json")):
-        feed = file.parent.name  # nama subfolder = nama feed
+    # Baca SEMUA file JSON di semua folder feed
+    for file in sorted(Path("data/raw/bmkg").glob("*/*.json")):
+        feed = file.parent.name  # nama folder = nama feed
         for item in baca_gempa(file):
             semua_baris.append(bersihkan(item, feed))
 
     df = pd.DataFrame(semua_baris)
     print("Sebelum dedup:", len(df))
-    df = df.drop_duplicates(subset="event_id")
-    print("Setelah dedup:", len(df))
 
-    folder_processed = folder_data / "processed"
-    folder_processed.mkdir(parents=True, exist_ok=True)
-    df.to_csv(folder_processed / "gempa.csv", index=False)
+    # --- SEMENTARA: cara lama, hanya untuk perbandingan ---
+    lama = df.drop_duplicates(subset="event_id")
+    print("Cara lama -> potensi terisi:", lama["potensi"].notna().sum(),
+          "| dirasakan terisi:", lama["dirasakan"].notna().sum())
+    # --- akhir bagian sementara ---
+
+    # Cara baru: gabungkan isi dari semua baris dengan event_id yang sama
+    df = df.groupby("event_id", as_index=False).first()
+    print("Setelah dedup:", len(df))
+    print("Cara baru -> potensi terisi:", df["potensi"].notna().sum(),
+          "| dirasakan terisi:", df["dirasakan"].notna().sum())
+
+    Path("data/processed").mkdir(parents=True, exist_ok=True)
+    df.to_csv("data/processed/gempa.csv", index=False)
+    print("Tersimpan: data/processed/gempa.csv")
 
 
 if __name__ == "__main__":
