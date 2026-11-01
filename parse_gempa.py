@@ -61,17 +61,11 @@ def main():
     df = pd.DataFrame(semua_baris)
     print("Sebelum dedup:", len(df))
 
-    # --- SEMENTARA: cara lama, hanya untuk perbandingan ---
-    lama = df.drop_duplicates(subset="event_id")
-    print("Cara lama -> potensi terisi:", lama["potensi"].notna().sum(),
-          "| dirasakan terisi:", lama["dirasakan"].notna().sum())
-    # --- akhir bagian sementara ---
-
-    # Cara baru: gabungkan isi dari semua baris dengan event_id yang sama
+    # Gabungkan isi dari semua baris dengan event_id yang sama
     df = df.groupby("event_id", as_index=False).first()
     print("Setelah dedup:", len(df))
-    print("Cara baru -> potensi terisi:", df["potensi"].notna().sum(),
-          "| dirasakan terisi:", df["dirasakan"].notna().sum())
+    print("Potensi terisi:", df["potensi"].notna().sum(),
+          "| Dirasakan terisi:", df["dirasakan"].notna().sum())
 
     Path("data/processed").mkdir(parents=True, exist_ok=True)
     df.to_csv("data/processed/gempa.csv", index=False)
