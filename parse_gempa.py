@@ -1,6 +1,7 @@
 import hashlib
 import json
 from pathlib import Path
+import pandas as pd
 
 
 def baca_gempa(path):
@@ -49,13 +50,23 @@ def bersihkan(item, feed):
 
 
 def main():
-    for feed in ["autogempa", "gempaterkini", "gempadirasakan"]:
-        # Ambil file terbaru (nama file berisi timestamp, jadi urut waktu)
-        file = sorted(Path(__file__).parent.joinpath("data/raw/bmkg", feed).glob("*.json"))[-1]
-        daftar = baca_gempa(file)
-        print(feed, "->", len(daftar), "gempa")
-        print(bersihkan(daftar[0], feed))
-        print()
+    # Folder data relatif terhadap lokasi skrip, bukan folder tempat perintah dijalankan
+    folder_data = Path(__file__).parent / "data"
+    semua_baris = []
+
+    for file in sorted((folder_data / "raw/bmkg").glob("*/*.json")):
+        feed = file.parent.name  # nama subfolder = nama feed
+        for item in baca_gempa(file):
+            semua_baris.append(bersihkan(item, feed))
+
+    df = pd.DataFrame(semua_baris)
+    print("Sebelum dedup:", len(df))
+    df = df.drop_duplicates(subset="event_id")
+    print("Setelah dedup:", len(df))
+
+    folder_processed = folder_data / "processed"
+    folder_processed.mkdir(parents=True, exist_ok=True)
+    df.to_csv(folder_processed / "gempa.csv", index=False)
 
 
 if __name__ == "__main__":
