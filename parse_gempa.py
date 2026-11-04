@@ -21,6 +21,13 @@ def buat_event_id(waktu_utc, lintang, bujur, magnitudo):
     return hashlib.sha1(teks.encode()).hexdigest()
 
 
+def rapikan_teks(nilai):
+    # Teks kosong atau hanya spasi dianggap tidak ada (None)
+    if nilai is None or nilai.strip() == "":
+        return None
+    return nilai.strip()
+
+
 def bersihkan(item, feed):
     # "Coordinates" berbentuk "-2.87,122.21" (lintang negatif = LS)
     lintang, bujur = item["Coordinates"].split(",")
@@ -42,10 +49,10 @@ def bersihkan(item, feed):
         "bujur": bujur,
         "magnitudo": magnitudo,
         "kedalaman_km": kedalaman_km,
-        "wilayah": item["Wilayah"],
+        "wilayah": rapikan_teks(item["Wilayah"]),
         # Tidak semua feed punya kolom ini
-        "potensi": item.get("Potensi"),
-        "dirasakan": item.get("Dirasakan"),
+        "potensi": rapikan_teks(item.get("Potensi")),
+        "dirasakan": rapikan_teks(item.get("Dirasakan")),
     }
 
 
