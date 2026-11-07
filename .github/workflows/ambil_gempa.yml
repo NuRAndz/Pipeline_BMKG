@@ -2,8 +2,8 @@ name: Ambil data gempa
 
 on:
   workflow_dispatch:      # tombol "Run workflow" manual
-   schedule:             # aktifkan nanti, setelah ada penyimpanan data
-     - cron: "*/30 * * * *"
+  schedule:             # aktifkan nanti, setelah ada penyimpanan data
+    - cron: "*/30 * * * *"
 
 jobs:
   ambil:
